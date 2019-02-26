@@ -94,35 +94,6 @@ def makeSlices(slice):
                 if total < 2 * minIngredients:
                     break
         
-
-
-
-        #         if isValid(slice_top_left):
-        #             valid_boxes+=1
-        #         if isValid(slice_top_right):
-        #             valid_boxes+=1
-        #         if isValid(slice_bot_left):
-        #             valid_boxes+=1
-        #         if isValid(slice_bot_right):
-        #             valid_boxes+=1
-        #         if valid_boxes > greatest_valid_boxes:
-        #             greatest_valid_boxes = valid_boxes
-        #             g_v_b_coords = [i, j]
-        # print("best split: ", g_v_b_coords)
-
-    # elif isValid(slice) == False:
-    #     new_slice_top = (row1, col1, (row1+row2)//2, col2)
-    #     new_slice_bottom = ((row1+row2)//2 + 1, col1, row2, col2)
-    #     new_slice_left = (row1, col1, row2, (col1+col2)//2)
-    #     new_slice_right = (row1, (col1+col2)//2 + 1, row2, col2)
-
-    #     if isValid(new_slice_top) or isValid(new_slice_bottom):
-    #         makeSlices(new_slice_top)
-    #         makeSlices(new_slice_bottom)
-
-    #     elif isValid(new_slice_left) or isValid(new_slice_right):
-    #         makeSlices(new_slice_left)
-    #         makeSlices(new_slice_right)
             
 
 first_slice = (0, 0, len(pizza) - 1, len(pizza[0]) - 1)
