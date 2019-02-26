@@ -14,6 +14,52 @@ total_cells = 0
 #tCount, mCount = 0, 0
 pizza = []
 
+
+class Node:
+    def __init__(self, row1, col1, row2, col2, root = False, leaf = False, valid = False):
+        self.row1 = row1
+        self.col1 = col1
+        self.row2 = row2
+        self.col2 = col2
+        self.slice = (row1, col1, row2, col2)
+
+        self.is_root = root
+        self.is_leaf = self.isLeaf(self.slice)
+        self.valid = valid
+        self.children = []
+
+    def addChild(self, row1, col1, row2, col2):
+        new_child = Node(row1, col1, row2, col2)
+        self.children.append(new_child)
+        pass
+
+    def pruneNode(self):
+        pass
+    
+    def isLeaf(self):
+        area = (self.row2+1-self.row1) * (self.col2+1-self.col1)
+        if self.isValid(self.slice):
+            return True
+        pass
+
+    def isValid(slice):
+        row1, col1, row2, col2 = slice
+        tCount, mCount, total = count(slice)
+        if tCount < minIngredients:
+            return False
+        elif mCount < minIngredients:
+            return False
+        elif total > maxCells:
+            return False
+        else:
+            # everytime a slice is marked as valid, returns True and keeps a running total of cells used in slices
+            # total_cells += total
+            return True
+
+
+rootPizza = Node(0, 0, rows - 1, cols - 1)
+
+
 #makes an array of data, with just 'T's and 'M's
 for row in f:
     if isFirst:
@@ -41,20 +87,19 @@ def count(slice = (0, 0, len(pizza), len(pizza[0]))):
     return tCount, mCount, tCount + mCount
 
 #checks a called slice and returns True if slice is a valid slice and false if not
-def isValid(slice):
-    row1, col1, row2, col2 = slice
-    print(slice)
-    tCount, mCount, total = count(slice)
-    if tCount < minIngredients:
-        return False
-    elif mCount < minIngredients:
-        return False
-    elif total > maxCells:
-        return False
-    else:
-        # everytime a slice is marked as valid, returns True and keeps a running total of cells used in slices
-        # total_cells += total
-        return True
+# def isValid(slice):
+#     row1, col1, row2, col2 = slice
+#     tCount, mCount, total = count(slice)
+#     if tCount < minIngredients:
+#         return False
+#     elif mCount < minIngredients:
+#         return False
+#     elif total > maxCells:
+#         return False
+#     else:
+#         # everytime a slice is marked as valid, returns True and keeps a running total of cells used in slices
+#         # total_cells += total
+#         return True
 
 
 # primitive slice maker that just cuts in half everytime
