@@ -24,27 +24,57 @@ class Node:
         self.slice = (row1, col1, row2, col2)
 
         self.is_root = root
-        self.is_leaf = self.isLeaf(self.slice)
-        self.valid = valid
+        self.is_valid = self.isValid()
+        self.is_leaf = self.isLeaf()
         self.children = []
+        self.highestcellcount = 0
+        if self.is_leaf == False:
+            self.createAllChildren()
+
 
     def addChild(self, row1, col1, row2, col2):
-        new_child = Node(row1, col1, row2, col2)
-        self.children.append(new_child)
-        pass
+        area = (self.row2+1-self.row1) * (self.col2+1-self.col1)
+        if self.is_leaf == False:
+            if area > 2 * minIngredients:
+                new_child = Node(row1, col1, row2, col2)
+                self.children.append(new_child)
+                print(row1, col1, row2, col2)
+
+    def createAllChildren(self):
+        for row in range(self.row2 + 1):
+            for col in range(self.col2 + 1):
+                print(row, col)
+                print(self.is_leaf)
+                if self.is_leaf == False:
+                    #topleft
+                    self.addChild(self.row1, self.col1, row, col)
+                    #topright
+                    if col + 1 < self.col2:
+                        self.addChild(self.row1, col + 1, row, self.col2)
+                    #bottomleft
+                    if row+1 < self.row2:
+                        self.addChild(row + 1, self.col1, self.row2, col)
+                    #bottomright
+                    if row + 1 < self.row2 and col+1 < self.col2:
+                        self.addChild(row + 1, col + 1, self.row2, self.col2)
+                else:
+                    continue
+
 
     def pruneNode(self):
         pass
     
     def isLeaf(self):
         area = (self.row2+1-self.row1) * (self.col2+1-self.col1)
-        if self.isValid(self.slice):
+        if area <= 2*minIngredients:
             return True
-        pass
+        if self.is_valid == True:
+            return True
+        else:
+            return False
 
-    def isValid(slice):
-        row1, col1, row2, col2 = slice
-        tCount, mCount, total = count(slice)
+    def isValid(self):
+        tCount, mCount, total = count(self.slice)
         if tCount < minIngredients:
             return False
         elif mCount < minIngredients:
@@ -56,8 +86,6 @@ class Node:
             # total_cells += total
             return True
 
-
-rootPizza = Node(0, 0, rows - 1, cols - 1)
 
 
 #makes an array of data, with just 'T's and 'M's
@@ -85,6 +113,8 @@ def count(slice = (0, 0, len(pizza), len(pizza[0]))):
             elif pizza[i][j] == 'M':
                 mCount += 1
     return tCount, mCount, tCount + mCount
+
+#isValid function moved into Node class and is automatically called to determine if a node is valid when it is initialized
 
 #checks a called slice and returns True if slice is a valid slice and false if not
 # def isValid(slice):
@@ -141,9 +171,6 @@ def makeSlices(slice):
         
             
 
-first_slice = (0, 0, len(pizza) - 1, len(pizza[0]) - 1)
-makeSlices(first_slice)
+root_pizza = Node(0, 0, rows - 1, cols -1, root = True)
 
-# slice1 = (0, 0, 2, 1)
-# print('is slice valid? : {}'.format(isValid(slice1)))
-# print(pizza)
+print(root_pizza.children)
