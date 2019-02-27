@@ -16,20 +16,47 @@ pizza = []
 
 
 class Node:
-    def __init__(self, row1, col1, row2, col2, root = False, leaf = False, valid = False):
+    def __init__(self, 
+                    row1, 
+                    col1, 
+                    row2, 
+                    col2, 
+                    root = False, 
+                    valid = False, 
+                    leaf = False, 
+                    split = None
+                ):
+
         self.row1 = row1
         self.col1 = col1
         self.row2 = row2
         self.col2 = col2
-        self.slice = (row1, col1, row2, col2)
+        self.slice = (self.row1, self.col1, self.row2, self.col2)
+
+        self.t_count, self.m_count, self.total_count = self.Count()
 
         self.is_root = root
         self.is_valid = self.isValid()
         self.is_leaf = self.isLeaf()
+
+        self.split = split
+
         self.children = []
+        #make children for each corner?
+        
         self.highestcellcount = 0
-        if self.is_leaf == False:
-            self.createAllChildren()
+
+        # if self.is_leaf == False:
+        #     self.createAllChildren()
+
+
+    #from the parent node, create child node of the same size but with a split attribute for every possible split. Append that new node to the child list of the parent.
+    def makeSplitChildren(self, slice):
+        row1, col1, row2, col2 = slice
+        for row in range(row2+1):
+            for col in range(col2+1):
+                new_child = Node(row1, col1, row2, col2, split = (row, col))
+                self.children.append(new_child)
 
 
     def addChild(self, row1, col1, row2, col2):
@@ -66,27 +93,35 @@ class Node:
     
     def isLeaf(self):
         area = (self.row2+1-self.row1) * (self.col2+1-self.col1)
-        if area <= 2*minIngredients:
-            return True
         if self.is_valid == True:
+            return True
+        elif area <= 2*minIngredients:
             return True
         else:
             return False
 
     def isValid(self):
-        tCount, mCount, total = count(self.slice)
-        if tCount < minIngredients:
+        if self.t_count < minIngredients:
             return False
-        elif mCount < minIngredients:
+        elif self.m_count < minIngredients:
             return False
-        elif total > maxCells:
+        elif self.total_count > maxCells:
             return False
         else:
             # everytime a slice is marked as valid, returns True and keeps a running total of cells used in slices
             # total_cells += total
             return True
 
-
+    def Count(self):
+        tCount = 0
+        mCount = 0
+        for i in range(self.row1, self.row2 + 1):
+            for j in range(self.col1, self.col2 + 1):
+                if pizza[i][j] == 'T':
+                    tCount += 1
+                elif pizza[i][j] == 'M':
+                    mCount += 1
+        return tCount, mCount, tCount + mCount
 
 #makes an array of data, with just 'T's and 'M's
 for row in f:
@@ -100,36 +135,9 @@ for row in f:
             ingredient_list.append(row[i])
         pizza.append(ingredient_list)
       
-#generic count function for a given pizza slice; default values count entire pizza; returns 'T's, 'M's, and total
-def count(slice = (0, 0, len(pizza), len(pizza[0]))):
-    row1, col1, row2, col2 = slice
-    tCount = 0
-    mCount = 0
-    total = 0
-    for i in range(row1, row2 + 1):
-        for j in range(col1, col2 + 1):
-            if pizza[i][j] == 'T':
-                tCount += 1
-            elif pizza[i][j] == 'M':
-                mCount += 1
-    return tCount, mCount, tCount + mCount
+#Count function moved into Node class and is automatically called to determine the counts for a slice
 
 #isValid function moved into Node class and is automatically called to determine if a node is valid when it is initialized
-
-#checks a called slice and returns True if slice is a valid slice and false if not
-# def isValid(slice):
-#     row1, col1, row2, col2 = slice
-#     tCount, mCount, total = count(slice)
-#     if tCount < minIngredients:
-#         return False
-#     elif mCount < minIngredients:
-#         return False
-#     elif total > maxCells:
-#         return False
-#     else:
-#         # everytime a slice is marked as valid, returns True and keeps a running total of cells used in slices
-#         # total_cells += total
-#         return True
 
 
 # primitive slice maker that just cuts in half everytime
@@ -172,5 +180,6 @@ def makeSlices(slice):
             
 
 root_pizza = Node(0, 0, rows - 1, cols -1, root = True)
-
-print(root_pizza.children)
+root_pizza.makeSplitChildren()
+for i in range(len(root_pizza.children)):
+    print(root_pizza.children[i].row2)
